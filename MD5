@@ -1,9 +1,9 @@
-ed795d71fd696319711825cdf18c56ed *DESCRIPTION
+af6cb445afea25f95aa5ca59b87ae345 *DESCRIPTION
 7415c167dfe8c8a15bb3043bdf65555f *NAMESPACE
 3be9ff031cddfc784de8b8f3f208d3e2 *R/dominates.R
 159cea42a4c4b594a59892643de13350 *R/feasibility.R
 3564ebf978fdbf7e0fa9f3b8d25bfdd7 *R/get.R
-25b040d8d6cb845573d0ba1cc60206b7 *R/model.R
+4210f97a72ed652e3263bc41533a3bbd *R/model.R
 d814c57afb6adaaac895c455f0b98c5b *R/pre_process.R
 73a84c5f9407230c222ccc32fdb4c9fc *R/predict.R
 d3e59cba137d7fc2f904ef5f3d2abc96 *R/quiet_funs.R

@@ -60,7 +60,7 @@ setClass('surmodel', representation(
 build_surmodel <- function(fn, n_in, d_in, doe_type = 'rlhs', sur_type = 'mkm', pre_process = NULL, post_process = NULL){
 
   if(is.data.frame(fn)){
-    fn <- fn %>% tibble::as.tibble()
+    fn <- fn %>% tibble::as_tibble()
     X <- .X(fn)
     Y <- .Y(fn)
     G <- .G(fn)
@@ -71,9 +71,13 @@ build_surmodel <- function(fn, n_in, d_in, doe_type = 'rlhs', sur_type = 'mkm', 
   }
   else{
     if(doe_type == 'rlhs')
-      X <- lhs::randomLHS(n_in, d_in) %>% tibble::as.tibble()
+      X <- lhs::randomLHS(n_in, d_in) %>%
+        as.data.frame() %>%
+        tibble::as_tibble()
     else if(doe_type == 'olhs')
-      X <- lhs::optimumLHS(n_in, d_in) %>% tibble::as.tibble()
+      X <- lhs::optimumLHS(n_in, d_in) %>%
+        as.data.frame() %>%
+        tibble::as_tibble()
     else
       stop('doe_type not available, check ?build_surmodel for further help.')
     if(ncol(X) > 1)
@@ -85,14 +89,23 @@ build_surmodel <- function(fn, n_in, d_in, doe_type = 'rlhs', sur_type = 'mkm', 
     pb <- utils::txtProgressBar(min = 0, max = n_in, width = n_in, style = 3)
     YG <- list(x = split(X, 1:n_in), i = 1:n_in) %>%
       purrr::pmap(safe_fn, fn = fn, pb = pb) %>%
-      purrr::transpose() %>%
-      purrr::map(purrr::reduce, rbind) %>%
-      purrr::map(tibble::as.tibble)
-    Y <- YG$y %>% stats::setNames(paste0('Y.', 1:ncol(.)))
+      purrr::transpose()
+
+    Y <- YG$y %>%
+      purrr::reduce(rbind) %>%
+      as.data.frame %>%
+      `names<-`(paste0('Y.', 1:ncol(.))) %>%
+      tidyr::unnest() %>%
+      tibble::as_tibble()
     if(is.null(YG$g))
       G <- dplyr::select(X, dplyr::contains('G'))
     else
-      G <- YG$g %>% stats::setNames(paste0('G.', 1:ncol(.)))
+      G <- YG$g %>%
+      purrr::reduce(rbind) %>%
+      as.data.frame %>%
+      `names<-`(paste0('G.', 1:ncol(.))) %>%
+      tidyr::unnest() %>%
+      tibble::as_tibble()
     source = 'DOE'
   }
 
